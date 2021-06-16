@@ -15,8 +15,8 @@ $user = $conf['mysql']['USER'];
 $pass = $conf['mysql']['PASS'];
 $database = $conf['mysql']['DATABASE'];
 
-//只实现了查询语句
-$sql = 'select * from question limit 10';
+//只实现了查询语句(建议使用少量数据 多会内存溢出 暂时没有优化)
+$sql = 'select * from act_unit limit 1';
 
 //mysql原版
 function mysql() {
@@ -37,9 +37,7 @@ function mysql() {
     }
     dump($rows);
 }
-
 //mysql();exit();
-
 
 //手写mysql连接 （注意：MySQL报文中整型值分别有1、2、3、4、8字节长度，使用【小端字节序】传输！！！！）
 function mysqlHand() {
@@ -72,7 +70,7 @@ function mysqlHand() {
     //读取登录结果
     $msg = socket_read($socket, 8192, PHP_BINARY_READ);
     //todo:校验是否正确登录
-    dump($msg);
+    //dump($msg);
 
     //发送命令查询等
     $push_msg = formatCommand(3, $sql);
@@ -80,6 +78,7 @@ function mysqlHand() {
 
     //读取返回的数据
     $msg = socket_read($socket, 8192, PHP_BINARY_READ);
+    dump($msg);
     $msg = decodeCommand($msg);
     dump($msg);
 
@@ -253,7 +252,6 @@ function decodeCommand($stream) {
         }
         $row_num++;
     }
-
     //结尾也是EOF结构 省略...
 
     return $arr;
